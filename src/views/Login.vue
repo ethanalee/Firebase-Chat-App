@@ -121,17 +121,12 @@ export default {
           }
         )
     },
-    logOut: function () {
-      auth.logOut().then(() => {
-        this.$store.dispatch('authLogOut')
-      })
-    },
     socialLogin () {
       auth
         .socialLogin()
         .then((res) => {
-          var token = res.credential.accessToken;
-          var user = res.user;
+          const token = res.credential.accessToken;
+          const user = res.user;
           this.$store.dispatch('authLogIn', user)
           this.$router.push('/home')
         },
@@ -139,6 +134,11 @@ export default {
           alert('Oops. ' + err.message)
         })
     },
+    logOut: function () {
+      auth.logOut().then(() => {
+        this.$store.dispatch('authLogOut')
+      })
+    }
   }
 };
 </script>
