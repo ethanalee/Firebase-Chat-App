@@ -8,7 +8,7 @@
             <v-spacer></v-spacer>
             </v-toolbar>
             <v-card-text
-            align-center
+              align-center
             >
             <v-form>
                 <v-text-field
@@ -32,6 +32,7 @@
               <button @click="socialLogin" class="social-button">
                 <img alt="Google Logo" src="../assets/google-logo.png">
               </button>
+
             </p>
             </v-card-text>
 
@@ -42,7 +43,7 @@
             </v-card-actions>
 
         </v-card>
-        
+
         </v-flex>
     </v-layout>
     </v-container>

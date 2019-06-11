@@ -5,7 +5,6 @@
 
         <v-layout row wrap fill-height>
           <v-flex xs12>
-
             <v-card>
               <v-card-title primary-title>
                 <div>
@@ -70,11 +69,9 @@
 
 <script>
   import { db } from '@/db.js'
-  import HelloWorld from '../components/HelloWorld'
 
   export default {
     components: {
-      HelloWorld
     },
     data () {
       return {
