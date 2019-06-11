@@ -29,11 +29,23 @@ const auth = {
         password
       )
   },
+  emailSignup: (email, password) => {
+    return firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+  },
   currentUser: () => {
     return firebase.auth().currentUser
   },
   logOut: () => {
     return firebase.auth().signOut()
+  },
+  socialLogin: () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    return firebase
+      .auth()
+      .signInWithPopup(provider)
   }
 }
 
