@@ -38,29 +38,52 @@
 </template>
 
 <script>
+import { auth } from '@/db.js'
+
 export default {
-  name: "home",
+  name: "login",
   data() {
     return {
       username: "",
       password: ""
     };
   },
+  computed: {
+    isAuth () {
+      return this.$store.state.isAuth
+    },
+    activeUser () {
+      return this.$store.state.activeUser
+    }
+  },
   methods: {
-    emailLogin: function() {
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(this.username, this.password)
+    emailLogin: function () {
+      auth
+        .emailLogIn(
+          this.username,
+          this.password
+        )
         .then(
           user => {
-            alert("Success!");
-            this.$router.push("/");
+            // Store result in vuex
+            this.$store.dispatch('authLogIn', auth.currentUser())
+
+            this.$router.push('/about')
+
+            // reset
+            this.username = ''
+            this.password = ''
           },
           err => {
-            alert(err.message);
+            alert(err.message)
           }
-        );
-    }
+        )
+    },
+    logOut: function () {
+      auth.logOut().then(() => {
+        this.$store.dispatch('authLogOut')
+      })
+    },
   }
 };
 </script>
