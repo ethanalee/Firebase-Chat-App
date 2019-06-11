@@ -45,7 +45,8 @@ export default {
   data() {
     return {
       username: "",
-      password: ""
+      password: "",
+      user: null
     };
   },
   computed: {
@@ -59,7 +60,7 @@ export default {
         )
         .then(
         (user) => {
-            this.$router.push('/about')
+            this.$router.push('/login')
         },
         (err) => {
             alert('Oops. ' + err.message)

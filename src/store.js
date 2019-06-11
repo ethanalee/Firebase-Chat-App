@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
     isAuth: false,
     activeUser: null,
@@ -30,3 +30,5 @@ export default new Vuex.Store({
     },
   }
 })
+
+export { store as default }

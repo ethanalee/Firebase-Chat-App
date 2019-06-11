@@ -46,6 +46,11 @@ const auth = {
     return firebase
       .auth()
       .signInWithPopup(provider)
+  },
+  checkAuth: () => {
+    return firebase
+      .auth()
+      .onAuthStateChanged()
   }
 }
 

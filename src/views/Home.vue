@@ -69,6 +69,7 @@
 </style>
 
 <script>
+  import { db } from '@/db.js'
   import HelloWorld from '../components/HelloWorld'
 
   export default {

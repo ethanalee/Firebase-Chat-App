@@ -109,7 +109,7 @@ export default {
             // Store result in vuex
             this.$store.dispatch('authLogIn', auth.currentUser())
 
-            this.$router.push('/about')
+            this.$router.push('/home')
 
             // reset
             this.username = ''
@@ -129,12 +129,15 @@ export default {
       auth
         .socialLogin()
         .then((res) => {
-          this.$router.push('/about')
+          var token = res.credential.accessToken;
+          var user = res.user;
+          this.$store.dispatch('authLogIn', user)
+          this.$router.push('/home')
         },
         (err) => {
           alert('Oops. ' + err.message)
         })
-    }
+    },
   }
 };
 </script>

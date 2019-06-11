@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from './store'
 
 Vue.use(Router)
 
@@ -10,36 +11,51 @@ const router =  new Router({
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
     },
     {
       path: '/home',
       name: 'home',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/Home.vue')
+      component: () => import(/* webpackChunkName: "home" */ './views/Home.vue'),
+      beforeEnter: (to, from, next) => {
+        if (store.state.isAuth === false) {
+          next('/404')
+        } else {
+          next()
+        }
+      }
     },
     {
       path: '/login',
+      alias: '/',
       name: 'login',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/Login.vue')
+      component: () => import(/* webpackChunkName: "login" */ './views/Login.vue')
     },
     {
       path: '/signup',
       name: 'signup',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/Signup.vue')
+      component: () => import(/* webpackChunkName: "signup" */ './views/Signup.vue')
+    },
+    {
+      path: '/404',
+      alias: '*',
+      name: 'notFound404',
+      component: () => import(/* webpackChunkName: "signup" */ './views/error404.vue')
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  if (
+    (
+      to.fullPath.includes('admin') &&
+      store.state.isAuth === false
+    )
+  ) {
+    next('/404')
+  } else {
+    next()
+  }
 })
 
 export { router as default }
