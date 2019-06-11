@@ -79,6 +79,12 @@
       return {
         friends: []
       }
+    },
+    firestore () {
+      return {
+        friends: db.collection('users')
+      }
     }
+
   }
 </script>
