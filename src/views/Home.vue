@@ -5,7 +5,6 @@
 
         <v-layout row wrap fill-height>
           <v-flex xs12>
-{{friends}}
             <v-card>
               <v-card-title primary-title>
                 <div>
