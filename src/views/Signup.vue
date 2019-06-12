@@ -10,6 +10,13 @@
             <v-card-text>
             <v-form>
                 <v-text-field
+                prepend-icon="edit"
+                name="displayName"
+                label="Display Name"
+                type="text"
+                v-model="displayName"
+                ></v-text-field>
+                <v-text-field
                 prepend-icon="person"
                 name="username"
                 label="Username"
@@ -38,7 +45,7 @@
 </template>
 
 <script>
-import { auth } from '@/db.js'
+import { auth, db } from '@/db.js'
 
 export default {
   name: "login",
@@ -46,7 +53,6 @@ export default {
     return {
       username: "",
       password: "",
-      user: null
     };
   },
   computed: {

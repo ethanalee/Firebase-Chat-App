@@ -14,14 +14,24 @@
     <v-btn icon>
         <v-icon>favorite</v-icon>
     </v-btn>
-    <v-btn icon>
-        <v-icon>more_vert</v-icon>
+    <v-btn round color="secondary" dark @click="logOut">
+        Log Out
     </v-btn>
   </v-toolbar>
 </template>
 
 <script>
+import { auth } from '../db'
+
 export default {
-  name: 'navBar'
+  name: 'navBar',
+  methods: {
+    logOut: function () {
+      auth.logOut().then(() => {
+        this.$store.dispatch('authLogOut')
+        this.$router.replace('/login')
+      })
+    },
+  }
 }
 </script>

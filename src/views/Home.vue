@@ -68,7 +68,7 @@
 </style>
 
 <script>
-  import { db } from '@/db.js'
+  import { db, auth } from '@/db.js'
 
   export default {
     components: {
@@ -78,11 +78,37 @@
         friends: []
       }
     },
+    beforeMount () {
+      this.loginUser()
+    },
+     methods: {
+      loginUser () {
+        var uid = this.$store.state.activeUser.uid
+        var displayName = this.$store.state.activeUser.displayName || this.$store.state.activeUser.email
+        var email = this.$store.state.activeUser.email
+        const usersRef = db.collection('users').doc(uid)
+
+        usersRef.get()
+          .then((docSnapShot) => {
+            if (docSnapShot.exists) {
+              usersRef.onSnapshot((doc) => {
+                console.log(doc)
+              })
+            } else {
+              usersRef.set({
+                displayName: displayName,
+                uid: uid,
+                email: email
+              })
+            }
+          })
+      }
+    },
     firestore () {
       return {
-        friends: db.collection('users')
+        friends: db.collection('users') // collection of users
       }
-    }
+    },
 
   }
 </script>

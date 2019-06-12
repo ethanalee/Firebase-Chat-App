@@ -17,13 +17,16 @@ const router =  new Router({
       path: '/home',
       name: 'home',
       component: () => import(/* webpackChunkName: "home" */ './views/Home.vue'),
-      beforeEnter: (to, from, next) => {
-        if (store.state.isAuth === false) {
-          next('/404')
-        } else {
-          next()
-        }
-      }
+      meta: {
+        authRequired: true
+      },
+      // beforeEnter: (to, from, next) => {
+      //   if (store.state.isAuth === false) {
+      //     next('/404')
+      //   } else {
+      //     next()
+      //   }
+      // }
     },
     {
       path: '/login',
@@ -46,13 +49,15 @@ const router =  new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  if (
-    (
-      to.fullPath.includes('admin') &&
-      store.state.isAuth === false
-    )
-  ) {
-    next('/404')
+  if (to.matched.some(record => record.meta.authRequired)) {
+    if (store.state.isAuth === false) {
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      next()
+    }
   } else {
     next()
   }
