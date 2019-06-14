@@ -27,7 +27,7 @@
                         return-object
                         required
                       ></v-autocomplete>
-                      
+
                     </v-form>
                   </div>
                 </div>
@@ -48,9 +48,9 @@
               <v-card xs12>
               <!-- <v-toolbar color="indigo" dark>
                 <v-toolbar-side-icon></v-toolbar-side-icon>
-      
+
                 <v-toolbar-title>Friends</v-toolbar-title>
-      
+
                 <v-spacer></v-spacer>
               </v-toolbar> -->
               <v-list three-line v-if="!!friendsDisplayed.length">
@@ -64,12 +64,12 @@
                   <v-list-tile-action>
                     <v-icon v-if="friend.icon" color="pink">star</v-icon>
                   </v-list-tile-action>
-      
+
                   <v-list-tile-content>
                     <v-list-tile-title v-text="friend.members[0].displayName" v-if="activeUser !== friend.members[0].uid"></v-list-tile-title>
                     <v-list-tile-title v-text="friend.members[1].displayName" v-else></v-list-tile-title>
                   </v-list-tile-content>
-      
+
                   <v-list-tile-avatar>
                     <img :src="friend.members[0].avatar" v-if="activeUser !== friend.members[0].uid">
                     <img :src="friend.members[1].avatar" v-else>
