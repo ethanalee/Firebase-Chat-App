@@ -8,34 +8,77 @@
             <v-card>
               <v-card-title primary-title>
                 <div>
-                  <h3 class="headline mb-0">Friend Search Here</h3>
-                  <div>https://vuetifyjs.com/en/components/autocompletes#searching-an-api</div>
+                  <h3 class="headline mb-0">Friend Search</h3>
+                  <div>
+                    <v-form
+                      ref="form"
+                      v-model="valid"
+                      lazy-validation
+                    >
+                    <v-autocomplete
+                        v-model="friendsAdded"
+                        :items="items"
+                        :loading="isLoading"
+                        :search-input.sync="search"
+                        color="white"
+                        hide-no-data
+                        hide-selected
+                        item-text="displayName"
+                        item-value="uid"
+                        placeholder="Start typing to Search"
+                        prepend-icon="mdi-database-search"
+                        return-object
+                        required
+                      ></v-autocomplete>
+                      
+                    </v-form>
+                  </div>
                 </div>
               </v-card-title>
+              <v-card-actions>
+                <v-btn
+                        :disabled="!valid"
+                        color="success"
+                        @click="validate"
+                      >
+                        Add Friend
+                      </v-btn>
+              </v-card-actions>
             </v-card>
 
           </v-flex>
-
-          <v-flex xs12>
-            <v-list three-line v-if="!!friends.length">
-              <template v-for="(friend, index) in friends">
-                <v-subheader v-if="friend.displayName" :key="friend.displayName">{{ friend.displayName }}</v-subheader>
-                <v-divider v-else-if="friend.divider" :inset="friend.inset" :key="index"></v-divider>
-                <v-list-tile avatar v-else :key="friend.title" @click="">
-                  <v-list-tile-avatar>
-                    <img v-if="!!friend.avatar" :src="friend.avatar">
-                    <span v-if="!friend.avatar && !!friend.displayName">
-                      {{ friend.displayName[0] }}
-                    </span>
-                  </v-list-tile-avatar>
+          <v-flex fluid fill-height="">
+              <v-card xs12>
+              <!-- <v-toolbar color="indigo" dark>
+                <v-toolbar-side-icon></v-toolbar-side-icon>
+      
+                <v-toolbar-title>Friends</v-toolbar-title>
+      
+                <v-spacer></v-spacer>
+              </v-toolbar> -->
+              <v-list three-line v-if="!!friendsDisplayed.length">
+                <v-list-tile
+                  v-for="friend in friendsDisplayed"
+                  :key="friend.uid"
+                  avatar
+                  ripple
+                  @click="print"
+                >
+                  <v-list-tile-action>
+                    <v-icon v-if="friend.icon" color="pink">star</v-icon>
+                  </v-list-tile-action>
+      
                   <v-list-tile-content>
-                    <v-list-tile-title v-html="friend.title"></v-list-tile-title>
-                    <v-list-tile-sub-title v-html="friend.subtitle"></v-list-tile-sub-title>
+                    <v-list-tile-title v-text="friend.members[0].displayName" v-if="activeUser !== friend.members[0].uid"></v-list-tile-title>
+                    <v-list-tile-title v-text="friend.members[1].displayName" v-else></v-list-tile-title>
                   </v-list-tile-content>
+      
+                  <v-list-tile-avatar>
+                    <img :src="friend.avatar">
+                  </v-list-tile-avatar>
                 </v-list-tile>
-              </template>
-            </v-list>
-            <span v-if="!friends.length">No Firends</span>
+              </v-list>
+            </v-card>
           </v-flex>
 
         </v-layout>
@@ -65,6 +108,15 @@
 .home-page {
   height: calc(100vh - 56px)
 }
+
+.v-btn {
+  .button {
+    margin-bottom: 10px;
+  }
+}
+button {
+  margin-bottom: 10px;
+}
 </style>
 
 <script>
@@ -75,13 +127,51 @@
     },
     data () {
       return {
-        friends: []
+        friends: [],
+        friendsAdded: [],
+        friendsDisplayed: [],
+        user: null,
+        isLoading: false,
+        search: null,
+        valid: true,
       }
+    },
+    computed: {
+      items () {
+      return this.friends.map(friend => {
+        const displayName = friend.displayName
+        return Object.assign({}, friend, { displayName })
+      })
+      },
+      activerUser () {
+        return this.$store.state.activerUser.uid
+      }
+
     },
     beforeMount () {
       this.loginUser()
     },
      methods: {
+      print () {
+        console.log(this.friendsDisplayed)
+      },
+       validate () {
+        if (this.$refs.form.validate()) {
+        this.addFriend()
+        }
+      },
+      addFriend () {
+        var uid = this.$store.state.activeUser.uid
+        const usersRef = db.collection('users').doc(uid)
+        console.log(this.friendsAdded)
+
+        const conversationRef = db.collection('conversations').add({
+          lastModified: null,
+          members: [db.doc('users/' + this.friendsAdded.uid), db.doc('users/' + uid)],
+        })
+
+        this.friendsAdded = []
+      },
       loginUser () {
         var uid = this.$store.state.activeUser.uid
         var displayName = this.$store.state.activeUser.displayName || this.$store.state.activeUser.email
@@ -92,7 +182,7 @@
           .then((docSnapShot) => {
             if (docSnapShot.exists) {
               usersRef.onSnapshot((doc) => {
-                console.log(doc)
+                this.user = doc
               })
             } else {
               usersRef.set({
@@ -100,15 +190,16 @@
                 uid: uid,
                 email: email
               })
+              this.user = this.$store.state.activeUser
             }
           })
-      }
+      },
     },
     firestore () {
       return {
-        friends: db.collection('users') // collection of users
+        friends: db.collection('users'), // collection of users
+        friendsDisplayed: db.collection('conversations').where("members", "array-contains", db.doc('users/' + this.$store.state.activeUser.uid))
       }
     },
-
   }
 </script>
