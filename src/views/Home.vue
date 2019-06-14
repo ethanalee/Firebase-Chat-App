@@ -18,11 +18,8 @@
                     <v-autocomplete
                         v-model="friendsAdded"
                         :items="items"
-                        :loading="isLoading"
-                        :search-input.sync="search"
+                        :filter="customFilter"
                         color="white"
-                        hide-no-data
-                        hide-selected
                         item-text="displayName"
                         item-value="uid"
                         placeholder="Start typing to Search"
@@ -37,12 +34,12 @@
               </v-card-title>
               <v-card-actions>
                 <v-btn
-                        :disabled="!valid"
-                        color="success"
-                        @click="validate"
-                      >
-                        Add Friend
-                      </v-btn>
+                    :disabled="!valid"
+                    color="success"
+                    @click="validate"
+                  >
+                    Add Friend
+                </v-btn>
               </v-card-actions>
             </v-card>
 
@@ -62,7 +59,7 @@
                   :key="friend.uid"
                   avatar
                   ripple
-                  @click="print"
+                  @click="displayConversation(friend.uid)"
                 >
                   <v-list-tile-action>
                     <v-icon v-if="friend.icon" color="pink">star</v-icon>
@@ -74,7 +71,8 @@
                   </v-list-tile-content>
       
                   <v-list-tile-avatar>
-                    <img :src="friend.avatar">
+                    <img :src="friend.members[0].avatar" v-if="activeUser !== friend.members[0].uid">
+                    <img :src="friend.members[1].avatar" v-else>
                   </v-list-tile-avatar>
                 </v-list-tile>
               </v-list>
@@ -89,7 +87,21 @@
 
         <v-layout align-space-between justify-center row fill-height>
           <v-flex xs12>
-            Chat History
+            <v-card>
+              <v-card-title primary-title>
+                <div>
+                  <h3 class="headline mb-0">Chat History</h3>
+                </div>
+              </v-card-title>
+              <v-card-text>
+                Display Messages Here
+                <v-layout row wrap>
+                  <v-flex xs7 offset-xs12 offset-md2 offset-lg5>
+                    {{ currentConversation }}
+                  </v-flex>
+                </v-layout>
+              </v-card-text>
+            </v-card>
           </v-flex>
         </v-layout>
 
@@ -108,15 +120,6 @@
 .home-page {
   height: calc(100vh - 56px)
 }
-
-.v-btn {
-  .button {
-    margin-bottom: 10px;
-  }
-}
-button {
-  margin-bottom: 10px;
-}
 </style>
 
 <script>
@@ -130,6 +133,7 @@ button {
         friends: [],
         friendsAdded: [],
         friendsDisplayed: [],
+        currentConversation: null,
         user: null,
         isLoading: false,
         search: null,
@@ -155,7 +159,16 @@ button {
       print () {
         console.log(this.friendsDisplayed)
       },
-       validate () {
+      customFilter (item, queryText, itemText) {
+      const textOne = item.displayName.toLowerCase()
+      const searchText = queryText.toLowerCase()
+
+      return textOne.indexOf(searchText) > -1
+      },
+      displayConversation (conversationUid) {
+        this.currentConversation = this.friendsDisplayed.filter(convo => convo.uid === conversationUid)
+      },
+      validate () {
         if (this.$refs.form.validate()) {
         this.addFriend()
         }
