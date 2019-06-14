@@ -17,17 +17,18 @@
                     >
                     <v-autocomplete
                         v-model="friendsAdded"
-                        :items="items"
-                        :filter="customFilter"
-                        color="white"
-                        item-text="displayName"
-                        item-value="uid"
-                        placeholder="Start typing to Search"
-                        prepend-icon="mdi-database-search"
                         return-object
                         required
+                        :items="friends"
+                        color="white"
+                        item-text="displayName"
+                        placeholder="Start typing to Search"
+                        prepend-icon="mdi-database-search"
+                        label="Add Friends"
+                        :filter="customFilter"
+                        outline
+                        no-data-text="No Friends"
                       ></v-autocomplete>
-
                     </v-form>
                   </div>
                 </div>
@@ -97,7 +98,7 @@
                 Display Messages Here
                 <v-layout row wrap>
                   <v-flex xs7 offset-xs12 offset-md2 offset-lg5>
-                    {{ currentConversation }}
+                    {{ friends }}
                   </v-flex>
                 </v-layout>
               </v-card-text>
@@ -135,22 +136,21 @@
         friendsDisplayed: [],
         currentConversation: null,
         user: null,
+        activerUser: null,
         isLoading: false,
         search: null,
         valid: true,
       }
     },
     computed: {
-      items () {
-      return this.friends.map(friend => {
-        const displayName = friend.displayName
-        return Object.assign({}, friend, { displayName })
-      })
-      },
       activerUser () {
         return this.$store.state.activerUser.uid
-      }
+      },
+    },
+    watch : {
+      friendsAdded: function (val) {
 
+      }
     },
     beforeMount () {
       this.loginUser()
@@ -177,6 +177,7 @@
         var uid = this.$store.state.activeUser.uid
         const usersRef = db.collection('users').doc(uid)
         console.log(this.friendsAdded)
+        // if friendsAdded.uid exists in friendsDisplayed.filter.members
 
         const conversationRef = db.collection('conversations').add({
           lastModified: null,
