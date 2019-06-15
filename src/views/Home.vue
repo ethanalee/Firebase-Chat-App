@@ -114,6 +114,13 @@
 
       </v-flex>
     </v-layout>
+    <v-snackbar
+      v-model="snackbar"
+      timeout="6000"
+      top
+      >
+      Convo already exists
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -136,21 +143,17 @@
         friendsDisplayed: [],
         currentConversation: null,
         user: null,
-        activerUser: null,
+        activeUser: null,
         isLoading: false,
         search: null,
         valid: true,
+        snackbar: false
       }
     },
     computed: {
-      activerUser () {
+      activeUser () {
         return this.$store.state.activerUser.uid
       },
-    },
-    watch : {
-      friendsAdded: function (val) {
-
-      }
     },
     beforeMount () {
       this.loginUser()
@@ -174,12 +177,29 @@
         }
       },
       addFriend () {
+        if(this.friendsAdded.length === 0) {
+          return;
+        }
         var uid = this.$store.state.activeUser.uid
         const usersRef = db.collection('users').doc(uid)
-        console.log(this.friendsAdded)
-        // if friendsAdded.uid exists in friendsDisplayed.filter.members
 
-        const conversationRef = db.collection('conversations').add({
+        const conversationRef = db.collection('conversations')
+
+        const res = this.friendsDisplayed.filter(convo => {
+          var friendone = convo.members[0]
+          var friendtwo = convo.members[1]
+          if (friendone.uid === this.friendsAdded.uid || friendtwo.uid === this.friendsAdded.uid) {
+            return true
+          }
+        })
+
+        if (res.length != 0) {
+          console.log('mistake')
+          this.snackbar = true
+          return;
+        }
+
+        conversationRef.add({
           lastModified: null,
           members: [db.doc('users/' + this.friendsAdded.uid), db.doc('users/' + uid)],
         })
