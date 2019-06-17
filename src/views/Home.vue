@@ -84,33 +84,13 @@
 
       </v-flex>
 
-        <chat-window/>
-
-        <v-layout align-space-between justify-center row fill-height>
-          <v-flex xs12>
-            <v-card>
-              <v-card-title primary-title>
-                <div>
-                  <h3 class="headline mb-0">Chat History</h3>
-                </div>
-              </v-card-title>
-              <v-card-text>
-                Display Messages Here
-                <v-layout row wrap>
-                  <v-flex xs7 offset-xs12 offset-md2 offset-lg5>
-                    {{ currentConversation }}
-                  </v-flex>
-                </v-layout>
-              </v-card-text>
-            </v-card>
-          </v-flex>
-        </v-layout>
+        <chat-window :conversation="currentConversation" v-if="currentConversation === null"/>
 
       </v-flex>
     </v-layout>
     <v-snackbar
       v-model="snackbar"
-      timeout=6000
+      :timeout="6000"
       top
       >
       Convo already exists
@@ -139,7 +119,6 @@
         friendsDisplayed: [],
         currentConversation: null,
         user: null,
-        activeUser: null,
         isLoading: false,
         search: null,
         valid: true,
@@ -148,7 +127,7 @@
     },
     computed: {
       activeUser () {
-        return this.$store.state.activerUser.uid
+        return this.$store.state["activeUser"]["uid"] || null
       },
     },
     beforeMount () {
@@ -162,7 +141,9 @@
       return textOne.indexOf(searchText) > -1
       },
       displayConversation (conversationUid) {
-        this.currentConversation = this.friendsDisplayed.filter(convo => convo.uid === conversationUid)
+        this.currentConversation = this.friendsDisplayed.filter(convo => convo.id === conversationUid)
+        this.currentConversation = this.currentConversation[0]
+        console.log(this.currentConversation)
       },
       validate () {
         if (this.$refs.form.validate()) {

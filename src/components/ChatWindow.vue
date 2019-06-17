@@ -8,14 +8,52 @@
               <h3 class="headline mb-0">Chat History</h3>
             </div>
           </v-card-title>
-          <v-card-text>
-            Display Messages Here
+          <v-card-title>
             <v-layout row wrap>
-              <v-flex xs7 offset-xs12 offset-md2 offset-lg5>
-                {{ currentConversation }}
-              </v-flex>
+              <v-flex
+                v-for="message in messagesList"
+                :key="message.id"
+                xs7
+                :offset-xs5="message.sender === activeUser"
+                :text-xs-right="message.sender === activeUser"
+              >
+
+                <v-avatar
+                  size="32"
+                  color="red"
+                  v-if="message.sender !== activeUser"
+                >
+                  <!-- <img
+                    v-if="chatBuddy && chatBuddy.displayPicture"
+                    :src="chatBuddy.displayPicture"
+                    alt="alt"
+                  > -->
+                  <span class="white--text">
+                    N
+                  </span>
+                </v-avatar>
+                <v-chip label color="grey lighten-2" text-color="black">
+                  {{message.body}}
+                </v-chip>
+                <v-avatar
+                  size="32"
+                  color="red"
+                  v-if="message.sender === activeUser"
+                >
+                  <!-- <img
+                    v-if="chatBuddy && chatBuddy.displayPicture"
+                    :src="chatBuddy.displayPicture"
+                    alt="alt"
+                  > -->
+                  <span class="white--text">
+                    N
+                  </span>
+                </v-avatar>
+                </v-flex>
+                <!-- {{ activeConversation }} -->
+
             </v-layout>
-          </v-card-text>
+          </v-card-title>
         </v-card>
       </v-flex>
     </v-layout>
@@ -34,8 +72,8 @@
               <v-flex md10 class="px-3 py-2">
                 <v-textarea
                   label="Name"
-                  v-model="name"
-                  :rules="nameRules"
+                  v-model="body"
+                  :rules="bodyRules"
                   :counter="260"
                   auto-grow
                   rows="1"
@@ -78,18 +116,70 @@
 </style>
 
 <script>
+  import { db, CurrentTime } from '@/db.js'
+
   export default {
-    name: 'Chat Window',
+    name: 'chatWindow',
     components: {
+    },
+    props: {
+      // conversation: {
+        // type: Object,
+        // required: true,
+        // default: () => {
+        //   uri: 'kSTz4t772PxhWO2w41YW'
+        // }
+      // }
     },
     data: () => ({
       currentConversation: window.location.pathname.split('/').slice(-1)[0],
       valid: true,
-      name: "",
-      nameRules: [
+      body: "",
+      bodyRules: [
         v => !!v || "No text found.",
         v => v.length <= 260 || "Smaller question please!"
       ],
-    })
+      messages: [],
+      tempConvo: null,
+    }),
+    computed: {
+      activeConversation () {
+        return this.tempConvo
+      },
+      activeUser () {
+        return this.$store.state["activeUser"]["uid"] || null
+      },
+      chatBuddy () {
+        let activeUser = this.activeUser
+        return this.activeConversation.members
+          .filter( member => {
+            return member.uri !== activeUser
+          })
+      },
+      messagesList () {
+        let messageList = this.messages ? this.messages : []
+        return messageList.reverse()
+      }
+    },
+    methods: {
+      submit () {
+        let messagePayload = {
+          createdAt: CurrentTime,
+          conversation: this.activeConversation.id,
+          type: 'text',
+          body: this.body,
+          sender: this.activeUser
+        }
+        db.collection('messages')
+          .add(messagePayload)
+      }
+    },
+    firestore: {
+      messages: db.collection('messages')
+        .where('conversation', '==', 'g1J2uIc4qupUo8ATZ6UQ')
+        .orderBy("createdAt")
+        .limit(30),
+      tempConvo: db.collection('conversations').doc('g1J2uIc4qupUo8ATZ6UQ')
+    }
   }
 </script>
