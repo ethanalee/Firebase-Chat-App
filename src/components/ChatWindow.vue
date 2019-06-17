@@ -1,5 +1,5 @@
 <template>
-  <v-flex xs12 md8 class="py-0 chat-window">
+  <v-flex xs12 class="py-0 chat-window">
     <v-layout align-space-between justify-center row fill-height>
       <v-flex xs12>
         <v-card height="100%" class="scroll" id="chat-scroll">
@@ -18,26 +18,40 @@
                 v-for="message in messagesList"
                 :key="message.id"
                 xs7
-                :offset-xs5="message.sender === activeUser"
-                :text-xs-right="message.sender === activeUser"
+                :offset-xs5="message.sender === activeUser.uid"
+                :text-xs-right="message.sender === activeUser.uid"
               >
                 <v-avatar
                   size="32"
                   color="red"
                   :style="{
-                    'float': message.sender !== activeUser ? 'left' : 'right'
+                    'float': message.sender !== activeUser.uid ? 'left' : 'right'
                   }"
                 >
+                  <!-- Buddy Avatar -->
                     <img
-                      v-if="chatBuddy && chatBuddy.avatar"
+                      v-if="chatBuddy && chatBuddy.avatar && message.sender === activeUser.uid"
                       :src="chatBuddy.avatar"
                     >
                     <span
-                      v-if="!chatBuddy.avatar"
+                      v-if="!chatBuddy.avatar && message.sender === activeUser.uid"
                       class="white--text"
                     >
-                      {{chatBuddy.displayName[0] || chatBuddy.email[0]}}
+                      {{chatBuddy.displayName[0] || chatBuddy.email[0] }}
                     </span>
+                  <!-- Active User Avatar -->
+                    <img
+                      v-if="activeUser && activeUser.avatar && message.sender !== activeUser.uid"
+                      :src="activeUser.avatar"
+                    >
+                    <span
+                      v-if="!activeUser.avatar && message.sender !== activeUser.uid"
+                      class="white--text"
+                    >
+                      {{chatBuddy.displayName[0] || chatBuddy.email[0] }}
+                    </span>
+
+
                   <!-- <span v-if="message.sender === activeUser">
                     <img
                       v-if="chatBuddy && chatBuddy.avatar"
@@ -170,15 +184,14 @@
         return this.convoRef
       },
       activeUser () {
-        return this.$store.state["activeUser"]["uid"] || null
+        return this.$store.state["activeUser"] || null
       },
       chatBuddy () {
-        let activeUser = this.activeUser
+        let activeUser = this.activeUser.uid
         return this.activeConversation.members
           .filter( member => {
-            return member.uri !== activeUser
-          })
-          [0]
+            return member.uid !== activeUser.uid
+          })[0]
       },
       messagesList () {
         let messages = this.messages
@@ -239,7 +252,7 @@
           conversation: this.activeConversation.id,
           type: 'text',
           body: this.body,
-          sender: this.activeUser
+          sender: this.activeUser.uid
         }
 
         if (!vm.imageDisplay.name) {

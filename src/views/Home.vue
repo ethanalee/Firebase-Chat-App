@@ -76,9 +76,9 @@
         </v-layout>
 
       </v-flex>
-      <v-flex>
+      <v-flex xs12 md8>
 
-        <chat-window :conversation="currentConversation" v-if="currentConversation === null"/>
+        <chat-window :conversation="currentConversation" v-if="currentConversation !== null"/>
 
       </v-flex>
     </v-layout>
@@ -134,9 +134,12 @@
       return textOne.indexOf(searchText) > -1
       },
       displayConversation (conversationUid) {
-        this.currentConversation = this.friendsDisplayed.filter(convo => convo.id === conversationUid)
-        this.currentConversation = this.currentConversation[0]
-        console.log(this.currentConversation)
+        let vm = this
+        vm.currentConversation = null
+        vm.$nextTick(() => {
+          vm.currentConversation = vm.friendsDisplayed.filter(convo => convo.id === conversationUid)
+          vm.currentConversation = vm.currentConversation[0]
+        })
       },
       validate () {
         if (this.$refs.form.validate()) {
@@ -148,7 +151,6 @@
           return;
         }
         var uid = this.$store.state.activeUser.uid
-        const usersRef = db.collection('users').doc(uid)
 
         const conversationRef = db.collection('conversations')
 
