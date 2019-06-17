@@ -2,59 +2,61 @@
   <v-flex xs12 md8 class="py-0 chat-window">
     <v-layout align-space-between justify-center row fill-height>
       <v-flex xs12>
-        <v-card height="100%">
-          <v-card-title primary-title>
+        <v-card height="100%" class="scroll" id="chat-scroll">
+          <v-card-title primary-title class="fixed-title">
             <div>
               <h3 class="headline mb-0">Chat History</h3>
             </div>
           </v-card-title>
           <v-card-title>
-            <v-layout row wrap>
-              <transition-group>
-              <v-flex
-                v-for="message in messagesList"
-                :key="message.id"
-                xs7
-                :offset-xs5="message.sender === activeUser"
-                :text-xs-right="message.sender === activeUser"
-              >
-
-                <v-avatar
-                  size="32"
-                  color="red"
-                  v-if="message.sender !== activeUser"
+            <transition-group
+              tag="div"
+              class="layout row wrap bottom"
+              name="fade"
+            >
+                <v-flex
+                  v-for="message in messagesList"
+                  :key="message.id"
+                  xs7
+                  :offset-xs5="message.sender === activeUser"
+                  :text-xs-right="message.sender === activeUser"
                 >
-                  <!-- <img
-                    v-if="chatBuddy && chatBuddy.displayPicture"
-                    :src="chatBuddy.displayPicture"
-                    alt="alt"
-                  > -->
-                  <span class="white--text">
-                    N
-                  </span>
-                </v-avatar>
-                <v-chip label color="grey lighten-2" text-color="black">
-                  {{message.body}}
-                </v-chip>
-                <v-avatar
-                  size="32"
-                  color="red"
-                  v-if="message.sender === activeUser"
-                >
-                  <!-- <img
-                    v-if="chatBuddy && chatBuddy.displayPicture"
-                    :src="chatBuddy.displayPicture"
-                    alt="alt"
-                  > -->
-                  <span class="white--text">
-                    N
-                  </span>
-                </v-avatar>
-                </v-flex>
-                </transition-group>
-                <!-- {{ activeConversation }} -->
 
-            </v-layout>
+                  <v-avatar
+                    size="32"
+                    color="red"
+                    v-if="message.sender !== activeUser"
+                  >
+                    <!-- <img
+                      v-if="chatBuddy && chatBuddy.displayPicture"
+                      :src="chatBuddy.displayPicture"
+                      alt="alt"
+                    > -->
+                    <span class="white--text">
+                      N
+                    </span>
+                  </v-avatar>
+                  <v-chip label color="grey lighten-2" text-color="black">
+                    {{message.body}}
+                  </v-chip>
+                  <v-avatar
+                    size="32"
+                    color="red"
+                    v-if="message.sender === activeUser"
+                  >
+                    <!-- <img
+                      v-if="chatBuddy && chatBuddy.displayPicture"
+                      :src="chatBuddy.displayPicture"
+                      alt="alt"
+                    > -->
+                    <span class="white--text">
+                      N
+                    </span>
+                  </v-avatar>
+                  </v-flex>
+                  <!-- {{ activeConversation }} -->
+
+            </transition-group>
           </v-card-title>
         </v-card>
       </v-flex>
@@ -115,6 +117,15 @@
 .overflow-hidden {
   overflow: hidden;
 }
+.scroll {
+  overflow-y: scroll;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .25s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
 </style>
 
 <script>
@@ -159,8 +170,7 @@
           })
       },
       messagesList () {
-        let messageList = this.messages ? this.messages : []
-        return messageList.reverse()
+        return this.messages.reverse()
       }
     },
     methods: {
@@ -172,14 +182,28 @@
           body: this.body,
           sender: this.activeUser
         }
+
         db.collection('messages')
           .add(messagePayload)
+      },
+      scrollToBottom () {
+        this.$nextTick()
+          .then(() => {
+            const element = document.getElementById('chat-scroll')
+            // console.log(`element`, element.scrollHeight)
+            element.scrollTop = element.scrollHeight + 30
+          })
+      }
+    },
+    watch: {
+      messagesList: function () {
+        this.scrollToBottom()
       }
     },
     firestore: {
       messages: db.collection('messages')
         .where('conversation', '==', 'g1J2uIc4qupUo8ATZ6UQ')
-        .orderBy("createdAt")
+        .orderBy("createdAt", "desc")
         .limit(30),
       tempConvo: db.collection('conversations').doc('g1J2uIc4qupUo8ATZ6UQ')
     }

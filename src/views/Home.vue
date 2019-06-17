@@ -85,7 +85,7 @@
       v-model="snackbar"
       :timeout="6000"
       top
-      >
+    >
       Convo already exists
     </v-snackbar>
   </v-container>
