@@ -14,48 +14,47 @@
               class="layout row wrap bottom reverse-order"
               name="fade"
             >
-                <v-flex
-                  v-for="message in messagesList"
-                  :key="message.id"
-                  xs7
-                  :offset-xs5="message.sender === activeUser"
-                  :text-xs-right="message.sender === activeUser"
+              <v-flex
+                v-for="message in messagesList"
+                :key="message.id"
+                xs7
+                :offset-xs5="message.sender === activeUser"
+                :text-xs-right="message.sender === activeUser"
+              >
+                <v-avatar
+                  size="32"
+                  color="red"
+                  :style="{
+                    'float': message.sender !== activeUser ? 'left' : 'right'
+                  }"
                 >
-
-                  <v-avatar
-                    size="32"
-                    color="red"
-                    v-if="message.sender !== activeUser"
-                  >
-                    <!-- <img
-                      v-if="chatBuddy && chatBuddy.displayPicture"
-                      :src="chatBuddy.displayPicture"
-                      alt="alt"
-                    > -->
-                    <span class="white--text">
-                      N
+                    <img
+                      v-if="chatBuddy && chatBuddy.avatar"
+                      :src="chatBuddy.avatar"
+                    >
+                    <span
+                      v-if="!chatBuddy.avatar"
+                      class="white--text"
+                    >
+                      {{chatBuddy.displayName[0] || chatBuddy.email[0]}}
                     </span>
-                  </v-avatar>
-                  <v-chip label color="grey lighten-2" text-color="black">
-                    {{message.body}}
-                  </v-chip>
-                  <v-avatar
-                    size="32"
-                    color="red"
-                    v-if="message.sender === activeUser"
-                  >
-                    <!-- <img
-                      v-if="chatBuddy && chatBuddy.displayPicture"
-                      :src="chatBuddy.displayPicture"
-                      alt="alt"
-                    > -->
-                    <span class="white--text">
-                      N
+                  <!-- <span v-if="message.sender === activeUser">
+                    <img
+                      v-if="chatBuddy && chatBuddy.avatar"
+                      :src="chatBuddy.avatar"
+                    >
+                    <span
+                      v-if="!chatBuddy.avatar"
+                      class="white--text"
+                    >
+                      {{chatBuddy.displayName[0] || chatBuddy.email[0]}}
                     </span>
-                  </v-avatar>
-                  </v-flex>
-                  <!-- {{ activeConversation }} -->
-
+                  </span> -->
+                </v-avatar>
+                <v-chip label color="grey lighten-2" text-color="black">
+                  {{ message.body }}
+                </v-chip>
+              </v-flex>
             </transition-group>
           </v-card-title>
         </v-card>
@@ -145,7 +144,6 @@
       }
     },
     data: () => ({
-      currentConversation: window.location.pathname.split('/').slice(-1)[0],
       valid: true,
       body: "",
       bodyRules: [
@@ -168,6 +166,7 @@
           .filter( member => {
             return member.uri !== activeUser
           })
+          [0]
       },
       messagesList () {
         let messages = this.messages
