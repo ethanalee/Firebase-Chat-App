@@ -6,8 +6,9 @@
     scroll-target="#scrolling-techniques"
   >
     <v-toolbar-side-icon></v-toolbar-side-icon>
-    <v-toolbar-title v-if="isHome">Welcome, {{ this.$store.state.activeUser.displayName || this.$store.state.activeUser.email }}</v-toolbar-title>
+    <v-toolbar-title v-if="isHome">Welcome, {{ this.displayName || this.$store.state.activeUser.email }}</v-toolbar-title>
     <v-toolbar-title v-else>Chat App</v-toolbar-title>
+    <v-btn>test</v-btn>
     <v-spacer></v-spacer>
     <!-- <v-btn icon>
         <v-icon>search</v-icon>
@@ -22,13 +23,13 @@
 </template>
 
 <script>
-import { auth } from '../db'
+import { auth, db } from '../db'
 
 export default {
   name: 'navBar',
   data () {
     return {
-
+      displayName: ""
     }
   },
   computed: {
@@ -37,7 +38,21 @@ export default {
       return true
       }
       return false
-    }
+    },
+  },
+  created () {
+      var vm = this
+      var userRef = db.collection('users').doc(vm.$store.state.activeUser.uid)
+
+      userRef.get().then(function(doc) {
+          if (doc.exists) {
+              vm.displayName = doc.data().displayName
+          } else {
+              console.log("No such document!");
+          }
+      }).catch(function(error) {
+          console.log("Error getting document:", error);
+      });
   },
   methods: {
     logOut: function () {

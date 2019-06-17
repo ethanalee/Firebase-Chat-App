@@ -18,10 +18,10 @@
                 ></v-text-field>
                 <v-text-field
                 prepend-icon="person"
-                name="username"
-                label="Username"
+                name="email"
+                label="Email"
                 type="text"
-                v-model="username"
+                v-model="email"
                 ></v-text-field>
                 <v-text-field
                 id="password"
@@ -51,8 +51,9 @@ export default {
   name: "login",
   data() {
     return {
-      username: "",
+      email: "",
       password: "",
+      displayName: ""
     };
   },
   computed: {
@@ -61,12 +62,18 @@ export default {
     emailSignup: function () {
       auth
         .emailSignup(
-          this.username,
+          this.email,
           this.password
         )
         .then(
-        (user) => {
-            this.$router.push('/login')
+        (res) => {
+          db.collection('users').doc(res.user.uid).set({
+            displayName: this.displayName,
+            uid: res.user.uid,
+            email: this.email
+          })
+
+          this.$router.push('/login')
         },
         (err) => {
             alert('Oops. ' + err.message)

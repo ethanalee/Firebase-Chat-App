@@ -98,7 +98,7 @@
                 Display Messages Here
                 <v-layout row wrap>
                   <v-flex xs7 offset-xs12 offset-md2 offset-lg5>
-                    {{ friends }}
+                    {{ currentConversation }}
                   </v-flex>
                 </v-layout>
               </v-card-text>
@@ -116,7 +116,7 @@
     </v-layout>
     <v-snackbar
       v-model="snackbar"
-      timeout="6000"
+      timeout=6000
       top
       >
       Convo already exists
@@ -159,9 +159,6 @@
       this.loginUser()
     },
      methods: {
-      print () {
-        console.log(this.friendsDisplayed)
-      },
       customFilter (item, queryText, itemText) {
       const textOne = item.displayName.toLowerCase()
       const searchText = queryText.toLowerCase()
@@ -194,7 +191,6 @@
         })
 
         if (res.length != 0) {
-          console.log('mistake')
           this.snackbar = true
           return;
         }

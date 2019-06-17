@@ -20,13 +20,6 @@ const router =  new Router({
       meta: {
         authRequired: true
       },
-      // beforeEnter: (to, from, next) => {
-      //   if (store.state.isAuth === false) {
-      //     next('/404')
-      //   } else {
-      //     next()
-      //   }
-      // }
     },
     {
       path: '/login',
