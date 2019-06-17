@@ -19,6 +19,9 @@ export default {
     return {
       //
     }
+  },
+  mounted () {
+    this.$vuetify.theme.primary = '#4caf50'
   }
 }
 </script>

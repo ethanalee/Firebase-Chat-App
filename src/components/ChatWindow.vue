@@ -30,22 +30,22 @@
                 >
                   <!-- Buddy Avatar -->
                     <img
-                      v-if="chatBuddy && chatBuddy.avatar && message.sender === activeUser.uid"
+                      v-if="chatBuddy && chatBuddy.avatar && message.sender !== activeUser.uid"
                       :src="chatBuddy.avatar"
                     >
                     <span
-                      v-if="!chatBuddy.avatar && message.sender === activeUser.uid"
+                      v-if="!chatBuddy.avatar && message.sender !== activeUser.uid"
                       class="white--text"
                     >
                       {{chatBuddy.displayName[0] || chatBuddy.email[0] }}
                     </span>
                   <!-- Active User Avatar -->
                     <img
-                      v-if="activeUser && activeUser.avatar && message.sender !== activeUser.uid"
+                      v-if="activeUser && activeUser.avatar && message.sender === activeUser.uid"
                       :src="activeUser.avatar"
                     >
                     <span
-                      v-if="!activeUser.avatar && message.sender !== activeUser.uid"
+                      v-if="!activeUser.avatar && message.sender === activeUser.uid"
                       class="white--text"
                     >
                       {{chatBuddy.displayName[0] || chatBuddy.email[0] }}
