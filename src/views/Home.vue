@@ -3,7 +3,7 @@
     <v-layout row wrap fill-height>
       <v-flex xs12 md4>
 
-        <v-layout row wrap fill-height>
+        <v-layout row wrap fill-height class="scroll">
           <v-flex xs12>
             <v-card>
               <v-card-title primary-title>
@@ -94,6 +94,9 @@
 <style>
 .home-page {
   height: calc(100vh - 56px)
+}
+.scroll {
+  overflow-y: scroll;
 }
 </style>
 
