@@ -47,18 +47,6 @@
 <script>
 import { auth, db } from '@/db.js'
 
-```
-uploadFile(e){
-    const file = e.target.files[0];
-    storage.ref('images/'+ file.name).put(file)
-      .then(response => {
-        response.ref.getDownloadURL().then((downloadURL) => {
-           firebase.database().ref(YOUR_DATABASE).child(THE_USER_ID).update({imageUrl:downloadURL})
-      }
-     .catch(err => console.log(err))
-}
-```
-
 export default {
   name: "login",
   data() {
@@ -90,17 +78,7 @@ export default {
         (err) => {
             alert('Oops. ' + err.message)
         });
-    },
-    uploadFile: function (e) {
-      const file = e.target.files[0];
-      storage.ref('images/'+ file.name).put(file)
-        .then(response => {
-          response.ref.getDownloadURL().then((downloadURL) => {
-            firebase.database().ref(YOUR_DATABASE).child(THE_USER_ID).update({imageUrl:downloadURL})
-          })
-        })
-      .catch(err => console.log(err))
-      }
+    }
   }
 };
 </script>

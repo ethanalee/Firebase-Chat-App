@@ -76,6 +76,7 @@
         </v-layout>
 
       </v-flex>
+      <v-flex>
 
         <chat-window :conversation="currentConversation" v-if="currentConversation !== null"/>
 
@@ -101,7 +102,7 @@
 </style>
 
 <script>
-  import { db, auth } from '@/db.js'
+  import { db } from '@/db.js'
   import chatWindow from '@/components/ChatWindow'
 
   export default {
@@ -130,7 +131,7 @@
       this.loginUser()
     },
      methods: {
-      customFilter (item, queryText, itemText) {
+      customFilter (item, queryText) {
       const textOne = item.displayName.toLowerCase()
       const searchText = queryText.toLowerCase()
 

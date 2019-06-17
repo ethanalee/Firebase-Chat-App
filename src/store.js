@@ -21,11 +21,11 @@ const store = new Vuex.Store({
     },
   },
   actions: {
-    authLogIn ({ commit, state }, user) {
+    authLogIn ({ commit }, user) {
       commit('authLogIn')
       commit('setActiveUser', user)
     },
-    authLogOut ({ commit, state }) {
+    authLogOut ({ commit }) {
       commit('authLogOut', false)
       commit('setActiveUser', null)
     },
