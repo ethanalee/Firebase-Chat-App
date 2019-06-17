@@ -77,12 +77,8 @@ export default {
         },
         (err) => {
             alert('Oops. ' + err.message)
-        });
-<<<<<<< HEAD
-    },
-=======
+        })
     }
->>>>>>> 920fbcd64cf145e2c2a4def1b0b113fb40082a20
   }
 };
 </script>
