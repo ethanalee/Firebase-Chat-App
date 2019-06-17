@@ -83,35 +83,8 @@
 
       </v-flex>
 
-      <v-flex xs12 md8>
+        <chat-window/>
 
-        <v-layout align-space-between justify-center row fill-height>
-          <v-flex xs12>
-            <v-card>
-              <v-card-title primary-title>
-                <div>
-                  <h3 class="headline mb-0">Chat History</h3>
-                </div>
-              </v-card-title>
-              <v-card-text>
-                Display Messages Here
-                <v-layout row wrap>
-                  <v-flex xs7 offset-xs12 offset-md2 offset-lg5>
-                    {{ currentConversation }}
-                  </v-flex>
-                </v-layout>
-              </v-card-text>
-            </v-card>
-          </v-flex>
-        </v-layout>
-
-        <v-layout row grid bottom>
-          <v-flex xs12>
-            Text Input
-          </v-flex>
-        </v-layout>
-
-      </v-flex>
     </v-layout>
   </v-container>
 </template>
@@ -124,9 +97,11 @@
 
 <script>
   import { db, auth } from '@/db.js'
+  import chatWindow from '@/components/ChatWindow'
 
   export default {
     components: {
+      chatWindow
     },
     data () {
       return {
