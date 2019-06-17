@@ -36,9 +36,10 @@
                       N
                     </span>
                   </v-avatar>
-                  <v-chip label color="grey lighten-2" text-color="black">
+                  <v-chip label color="grey lighten-2" text-color="black" v-if="message.type === 'text'">
                     {{message.body}}
                   </v-chip>
+                    <v-img v-else-if="message.type === 'image'" :src="message.body" alt="Image Unavailable" outline></v-img>
                   <v-avatar
                     size="32"
                     color="red"
@@ -69,7 +70,14 @@
           <v-form v-model="valid" ref="form" lazy-validation class="px-0 py-0">
             <v-layout row grid bottom>
               <v-flex class="px-0 py-0">
-                <v-btn fab color="success" class="mx-0 my-0 fill-button py-3" xs2>
+                <input
+                  type="file"
+                  style="display: none"
+                  ref="imageDisplay"
+                  id="imageDisplay"
+                  accept="image/*"
+                  @change="onFilePicked">
+                <v-btn fab color="success" class="mx-0 my-0 fill-button py-3" xs2 @click="pickFile('imageDisplay')">
                   +
                 </v-btn>
               </v-flex>
@@ -132,7 +140,7 @@
 </style>
 
 <script>
-  import { db, CurrentTime } from '@/db.js'
+  import { db, CurrentTime, storage } from '@/db.js'
 
   export default {
     name: 'chatWindow',
@@ -155,6 +163,11 @@
         v => !!v || "No text found.",
         v => v.length <= 260 || "Smaller question please!"
       ],
+      imageDisplay: {
+        name: '',
+        url: '',
+        file: ''
+      },
       messages: [],
       tempConvo: null,
     }),
@@ -178,7 +191,54 @@
       }
     },
     methods: {
+      pickFile (ref) {
+        this.$refs[ref].click()
+      },
+      onFilePicked (e) {
+        const target = e.path['0'].id
+        const files = e.target.files
+        if (files[0] !== undefined && files[0].type.match(/image.*/)) {
+          this[target].name = files[0].name
+          if (this[target].name.lastIndexOf('.') <= 0) {
+            return
+          }
+          const fr = new FileReader()
+          fr.readAsDataURL(files[0])
+          fr.addEventListener('load', () => {
+            this[target].url = fr.result
+            this[target].file = files[0] // this is an image file that can be sent to server...
+            // TODO
+            // this.resizePhoto(fr.result)
+          })
+        } else {
+          this[target].name = ''
+          this[target].file = ''
+          this[target].url = ''
+        }
+      },
+      sendFormImages (messagePayload) {
+        let vm = this
+        let fileExtension = vm.imageDisplay.name
+          .split('.')
+          .slice(-1)
+          .pop()
+
+        storage
+          .images(messagePayload.conversation + '_displayImage' + '.' + fileExtension)
+          .put(vm.imageDisplay.file)
+          .then(snapshot => snapshot.ref.getDownloadURL())
+          .then(url => {
+            messagePayload.body = url
+            messagePayload.type = 'image'
+            db.collection('messages')
+              .add(messagePayload)
+          })
+          .catch((error) => {
+            vm.statusText = error
+          })
+      },
       submit () {
+        let vm = this
         let messagePayload = {
           createdAt: CurrentTime,
           conversation: this.activeConversation.id,
@@ -187,8 +247,13 @@
           sender: this.activeUser
         }
 
-        db.collection('messages')
+        if (!vm.imageDisplay.name) {
+          db.collection('messages')
           .add(messagePayload)
+        } else if (vm.imageDisplay.name) {
+          vm.sendFormImages(messagePayload)
+        }
+
       },
       scrollToBottom () {
         this.$nextTick()
@@ -209,7 +274,7 @@
         .where('conversation', '==', 'g1J2uIc4qupUo8ATZ6UQ')
         .orderBy("createdAt", "desc")
         .limit(30),
-      tempConvo: db.collection('conversations').doc(this.conversation.uri)
+      //tempConvo: db.collection('conversations').doc(this.conversation.uri)
     }
   }
 </script>

@@ -3,7 +3,7 @@
     <v-layout row wrap fill-height>
       <v-flex xs12 md4>
 
-        <v-layout row wrap fill-height class="scroll">
+        <v-layout row wrap fill-height>
           <v-flex xs12>
             <v-card>
               <v-card-title primary-title>
@@ -76,16 +76,16 @@
         </v-layout>
 
       </v-flex>
+      <v-flex>
 
-        <chat-window :conversation="currentConversation" v-if="currentConversation !== null"/>
+        <chat-window :conversation="currentConversation" v-if="currentConversation === null"/>
 
       </v-flex>
     </v-layout>
     <v-snackbar
       v-model="snackbar"
-      :timeout="6000"
       top
-    >
+      >
       Convo already exists
     </v-snackbar>
   </v-container>
@@ -94,9 +94,6 @@
 <style>
 .home-page {
   height: calc(100vh - 56px)
-}
-.scroll {
-  overflow-y: scroll;
 }
 </style>
 
@@ -137,33 +134,33 @@
       return textOne.indexOf(searchText) > -1
       },
       displayConversation (conversationUid) {
-        this.currentConversation = null
-
-        this.$nextTick(() => {
-          this.currentConversation = this.friendsDisplayed.filter(convo => convo.id === conversationUid)
-          this.currentConversation = this.currentConversation[0]
-        })
+        this.currentConversation = this.friendsDisplayed.filter(convo => convo.id === conversationUid)
+        this.currentConversation = this.currentConversation[0]
+        console.log(this.currentConversation)
       },
       validate () {
         if (this.$refs.form.validate()) {
-          this.addFriend()
+        this.addFriend()
         }
       },
       addFriend () {
         if(this.friendsAdded.length === 0) {
           return;
         }
-        let uid = this.$store.state.activeUser.uid
+        var uid = this.$store.state.activeUser.uid
+        const usersRef = db.collection('users').doc(uid)
 
         const conversationRef = db.collection('conversations')
 
         const res = this.friendsDisplayed.filter(convo => {
-          let friendone = convo.members[0]
-          let friendtwo = convo.members[1]
-          return friendone.uid === this.friendsAdded.uid || friendtwo.uid === this.friendsAdded.uid
+          var friendone = convo.members[0]
+          var friendtwo = convo.members[1]
+          if (friendone.uid === this.friendsAdded.uid || friendtwo.uid === this.friendsAdded.uid) {
+            return true
+          }
         })
 
-        if (res.length !== 0) {
+        if (res.length != 0) {
           this.snackbar = true
           return;
         }
