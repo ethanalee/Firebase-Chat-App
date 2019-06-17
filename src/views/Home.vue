@@ -77,7 +77,7 @@
 
       </v-flex>
 
-        <chat-window :conversation="currentConversation" v-if="currentConversation === null"/>
+        <chat-window :conversation="currentConversation" v-if="currentConversation !== null"/>
 
       </v-flex>
     </v-layout>
@@ -137,33 +137,33 @@
       return textOne.indexOf(searchText) > -1
       },
       displayConversation (conversationUid) {
-        this.currentConversation = this.friendsDisplayed.filter(convo => convo.id === conversationUid)
-        this.currentConversation = this.currentConversation[0]
-        console.log(this.currentConversation)
+        this.currentConversation = null
+
+        this.$nextTick(() => {
+          this.currentConversation = this.friendsDisplayed.filter(convo => convo.id === conversationUid)
+          this.currentConversation = this.currentConversation[0]
+        })
       },
       validate () {
         if (this.$refs.form.validate()) {
-        this.addFriend()
+          this.addFriend()
         }
       },
       addFriend () {
         if(this.friendsAdded.length === 0) {
           return;
         }
-        var uid = this.$store.state.activeUser.uid
-        const usersRef = db.collection('users').doc(uid)
+        let uid = this.$store.state.activeUser.uid
 
         const conversationRef = db.collection('conversations')
 
         const res = this.friendsDisplayed.filter(convo => {
-          var friendone = convo.members[0]
-          var friendtwo = convo.members[1]
-          if (friendone.uid === this.friendsAdded.uid || friendtwo.uid === this.friendsAdded.uid) {
-            return true
-          }
+          let friendone = convo.members[0]
+          let friendtwo = convo.members[1]
+          return friendone.uid === this.friendsAdded.uid || friendtwo.uid === this.friendsAdded.uid
         })
 
-        if (res.length != 0) {
+        if (res.length !== 0) {
           this.snackbar = true
           return;
         }

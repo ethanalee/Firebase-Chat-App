@@ -139,13 +139,13 @@
     components: {
     },
     props: {
-      // conversation: {
-        // type: Object,
-        // required: true,
-        // default: () => {
-        //   uri: 'kSTz4t772PxhWO2w41YW'
-        // }
-      // }
+      conversation: {
+        type: Object,
+        required: true,
+        default: () => {
+          uri: 'kSTz4t772PxhWO2w41YW'
+        }
+      }
     },
     data: () => ({
       currentConversation: window.location.pathname.split('/').slice(-1)[0],
@@ -209,7 +209,7 @@
         .where('conversation', '==', 'g1J2uIc4qupUo8ATZ6UQ')
         .orderBy("createdAt", "desc")
         .limit(30),
-      tempConvo: db.collection('conversations').doc('g1J2uIc4qupUo8ATZ6UQ')
+      tempConvo: db.collection('conversations').doc(this.conversation.uri)
     }
   }
 </script>
