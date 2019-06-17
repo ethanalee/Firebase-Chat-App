@@ -106,7 +106,7 @@ export default {
           this.password
         )
         .then(
-          user => {
+          () => {
             // Store result in vuex
             this.$store.dispatch('authLogIn', auth.currentUser())
 
@@ -125,7 +125,6 @@ export default {
       auth
         .socialLogin()
         .then((res) => {
-          const token = res.credential.accessToken;
           const user = res.user;
           this.$store.dispatch('authLogIn', user)
           this.$router.push('/home')

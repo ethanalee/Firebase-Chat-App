@@ -40,12 +40,8 @@ export default {
       userRef.get().then(function(doc) {
           if (doc.exists) {
               vm.displayName = doc.data().displayName
-          } else {
-              console.log("No such document!");
           }
-      }).catch(function(error) {
-          console.log("Error getting document:", error);
-      });
+      }).catch(error => {throw error})
   },
   methods: {
     logOut: function () {

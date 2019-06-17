@@ -5,7 +5,7 @@
         <v-card height="100%" class="scroll" id="chat-scroll">
           <v-card-title primary-title class="fixed-title">
             <div>
-              <h3 class="headline mb-0">Chat History</h3>
+              <h3 class="headline mb-0">Chat History {{conversation.uid}}</h3>
             </div>
           </v-card-title>
           <v-card-title>
@@ -150,9 +150,6 @@
       conversation: {
         type: Object,
         required: true,
-        default: () => {
-          uri: 'kSTz4t772PxhWO2w41YW'
-        }
       }
     },
     data: () => ({
@@ -169,11 +166,11 @@
         file: ''
       },
       messages: [],
-      tempConvo: null,
+      convoRef: null,
     }),
     computed: {
       activeConversation () {
-        return this.tempConvo
+        return this.convoRef
       },
       activeUser () {
         return this.$store.state["activeUser"]["uid"] || null
@@ -259,7 +256,6 @@
         this.$nextTick()
           .then(() => {
             const element = document.getElementById('chat-scroll')
-            // console.log(`element`, element.scrollHeight)
             element.scrollTop = element.scrollHeight + 30
           })
       }
@@ -267,14 +263,31 @@
     watch: {
       messagesList: function () {
         this.scrollToBottom()
+      },
+      conversation: {
+        immediate: true,
+        handler(conversation) {
+          this.$bind(
+            'convoRef',
+            db.collection('conversations')
+              .doc(conversation.uid)
+          )
+
+          this.$bind(
+            'messages',
+            db.collection('messages')
+              .where('conversation', '==', conversation.uid)
+              .orderBy('createdAt', 'desc')
+              .limit(30)
+          )
+        }
       }
     },
     firestore: {
-      messages: db.collection('messages')
-        .where('conversation', '==', 'g1J2uIc4qupUo8ATZ6UQ')
-        .orderBy("createdAt", "desc")
-        .limit(30),
-      //tempConvo: db.collection('conversations').doc(this.conversation.uri)
+      // messages: db.collection('messages')
+      //   .where('conversation', '==', 'g1J2uIc4qupUo8ATZ6UQ')
+      //   .orderBy("createdAt", "desc")
+      //   .limit(30)
     }
   }
 </script>
