@@ -8,14 +8,7 @@
     <v-toolbar-side-icon></v-toolbar-side-icon>
     <v-toolbar-title v-if="isHome">Welcome, {{ this.displayName || this.$store.state.activeUser.email }}</v-toolbar-title>
     <v-toolbar-title v-else>Chat App</v-toolbar-title>
-    <v-btn>test</v-btn>
     <v-spacer></v-spacer>
-    <!-- <v-btn icon>
-        <v-icon>search</v-icon>
-    </v-btn>
-    <v-btn icon>
-        <v-icon>favorite</v-icon>
-    </v-btn> -->
     <v-btn round color="secondary" dark @click="logOut">
         Log Out
     </v-btn>

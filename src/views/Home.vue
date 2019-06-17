@@ -47,13 +47,6 @@
           </v-flex>
           <v-flex fluid fill-height="">
               <v-card xs12>
-              <!-- <v-toolbar color="indigo" dark>
-                <v-toolbar-side-icon></v-toolbar-side-icon>
-
-                <v-toolbar-title>Friends</v-toolbar-title>
-
-                <v-spacer></v-spacer>
-              </v-toolbar> -->
               <v-list three-line v-if="!!friendsDisplayed.length">
                 <v-list-tile
                   v-for="friend in friendsDisplayed"
@@ -116,7 +109,6 @@
     </v-layout>
     <v-snackbar
       v-model="snackbar"
-      timeout=6000
       top
       >
       Convo already exists
@@ -197,7 +189,16 @@
 
         conversationRef.add({
           lastModified: null,
-          members: [db.doc('users/' + this.friendsAdded.uid), db.doc('users/' + uid)],
+          members: [db.doc('users/' + this.friendsAdded.uid), db.doc('users/' + uid)]
+        })
+        .then( doc => {
+          conversationRef.doc(doc.id).set({
+            uid: doc.id
+          },
+          {
+            merge: true
+          }
+          )
         })
 
         this.friendsAdded = []
@@ -206,6 +207,7 @@
         var uid = this.$store.state.activeUser.uid
         var displayName = this.$store.state.activeUser.displayName || this.$store.state.activeUser.email
         var email = this.$store.state.activeUser.email
+        var avatar = this.$store.state.activeUser.photoURL
         const usersRef = db.collection('users').doc(uid)
 
         usersRef.get()
@@ -218,7 +220,8 @@
               usersRef.set({
                 displayName: displayName,
                 uid: uid,
-                email: email
+                email: email,
+                avatar: avatar
               })
               this.user = this.$store.state.activeUser
             }
