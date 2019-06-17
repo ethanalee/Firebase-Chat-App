@@ -77,38 +77,16 @@
 
       </v-flex>
 
-      <v-flex xs12 md8>
-
-        <v-layout align-space-between justify-center row fill-height>
-          <v-flex xs12>
-            <v-card>
-              <v-card-title primary-title>
-                <div>
-                  <h3 class="headline mb-0">Chat History</h3>
-                </div>
-              </v-card-title>
-              <v-card-text>
-                Display Messages Here
-                <v-layout row wrap>
-                  <v-flex xs7 offset-xs12 offset-md2 offset-lg5>
-                    {{ currentConversation }}
-                  </v-flex>
-                </v-layout>
-              </v-card-text>
-            </v-card>
-          </v-flex>
-        </v-layout>
-
-        <v-layout row grid bottom>
-          <v-flex xs12>
-            Text Input
-          </v-flex>
-        </v-layout>
+        <chat-window :conversation="currentConversation" v-if="currentConversation === null"/>
 
       </v-flex>
     </v-layout>
     <v-snackbar
       v-model="snackbar"
+<<<<<<< HEAD
+=======
+      :timeout="6000"
+>>>>>>> c3c7bc7bde067a81902611b0b344b339bfb1ecbf
       top
       >
       Convo already exists
@@ -124,9 +102,11 @@
 
 <script>
   import { db, auth } from '@/db.js'
+  import chatWindow from '@/components/ChatWindow'
 
   export default {
     components: {
+      chatWindow
     },
     data () {
       return {
@@ -135,7 +115,6 @@
         friendsDisplayed: [],
         currentConversation: null,
         user: null,
-        activeUser: null,
         isLoading: false,
         search: null,
         valid: true,
@@ -144,7 +123,7 @@
     },
     computed: {
       activeUser () {
-        return this.$store.state.activerUser.uid
+        return this.$store.state["activeUser"]["uid"] || null
       },
     },
     beforeMount () {
@@ -158,7 +137,9 @@
       return textOne.indexOf(searchText) > -1
       },
       displayConversation (conversationUid) {
-        this.currentConversation = this.friendsDisplayed.filter(convo => convo.uid === conversationUid)
+        this.currentConversation = this.friendsDisplayed.filter(convo => convo.id === conversationUid)
+        this.currentConversation = this.currentConversation[0]
+        console.log(this.currentConversation)
       },
       validate () {
         if (this.$refs.form.validate()) {

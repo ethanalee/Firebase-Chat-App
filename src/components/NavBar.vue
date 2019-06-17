@@ -1,6 +1,6 @@
 <template>
   <v-toolbar
-    color="primary"
+    color="green"
     dark
     scroll-off-screen
     scroll-target="#scrolling-techniques"
