@@ -84,7 +84,7 @@
 
       </v-flex>
 
-      <v-flex xs12 md8>
+        <chat-window/>
 
         <v-layout align-space-between justify-center row fill-height>
           <v-flex xs12>
@@ -132,9 +132,11 @@
 
 <script>
   import { db, auth } from '@/db.js'
+  import chatWindow from '@/components/ChatWindow'
 
   export default {
     components: {
+      chatWindow
     },
     data () {
       return {
