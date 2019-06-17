@@ -11,7 +11,7 @@
           <v-card-title>
             <transition-group
               tag="div"
-              class="layout row wrap bottom"
+              class="layout row wrap bottom reverse-order"
               name="fade"
             >
                 <v-flex
@@ -75,7 +75,7 @@
               </v-flex>
               <v-flex md10 class="px-3 py-2">
                 <v-textarea
-                  label="Name"
+                  label="Message"
                   v-model="body"
                   :rules="bodyRules"
                   :counter="260"
@@ -126,6 +126,9 @@
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
+.reverse-order {
+  flex-direction: column-reverse !important;
+}
 </style>
 
 <script>
@@ -170,7 +173,8 @@
           })
       },
       messagesList () {
-        return this.messages.reverse()
+        let messages = this.messages
+        return messages
       }
     },
     methods: {
