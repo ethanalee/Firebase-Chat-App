@@ -106,12 +106,6 @@
           </v-flex>
         </v-layout>
 
-        <v-layout row grid bottom>
-          <v-flex xs12>
-            Text Input
-          </v-flex>
-        </v-layout>
-
       </v-flex>
     </v-layout>
     <v-snackbar
