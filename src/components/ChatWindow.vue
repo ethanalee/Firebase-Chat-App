@@ -10,6 +10,7 @@
           </v-card-title>
           <v-card-title>
             <v-layout row wrap>
+              <transition-group>
               <v-flex
                 v-for="message in messagesList"
                 :key="message.id"
@@ -50,6 +51,7 @@
                   </span>
                 </v-avatar>
                 </v-flex>
+                </transition-group>
                 <!-- {{ activeConversation }} -->
 
             </v-layout>
