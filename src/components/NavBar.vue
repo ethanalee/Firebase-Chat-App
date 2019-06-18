@@ -6,11 +6,15 @@
     scroll-target="#scrolling-techniques"
   >
     <v-toolbar-side-icon></v-toolbar-side-icon>
-    <v-toolbar-title v-if="isHome">Welcome, {{ this.displayName || this.$store.state.activeUser.email }}</v-toolbar-title>
-    <v-toolbar-title v-else>Chat App</v-toolbar-title>
+    <v-toolbar-title v-if="isHome">
+      Welcome, {{ this.displayName || this.$store.state.activeUser.email }}
+    </v-toolbar-title>
+    <v-toolbar-title v-else>
+      Chat App
+    </v-toolbar-title>
     <v-spacer></v-spacer>
     <v-btn round color="secondary" dark @click="logOut">
-        Log Out
+      Log Out
     </v-btn>
   </v-toolbar>
 </template>
