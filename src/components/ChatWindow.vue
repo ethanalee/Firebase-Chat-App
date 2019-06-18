@@ -57,7 +57,7 @@
                       v-if="!activeUser.avatar && message.sender === activeUser.uid"
                       class="white--text"
                     >
-                      {{chatBuddy.displayName[0] || chatBuddy.email[0] }}
+                      {{activeUser.displayName[0] || activeUser.email[0] }}
                     </span>
                 </v-avatar>
                 <v-chip class="mb-3" label color="grey lighten-2" text-color="black" v-if="message.type === 'text'">
