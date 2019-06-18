@@ -138,7 +138,7 @@
 .fade-enter-active, .fade-leave-active {
   transition: opacity .25s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-enter, .fade-leave-to {
   opacity: 0;
 }
 .reverse-order {
@@ -218,9 +218,7 @@
           fr.readAsDataURL(files[0])
           fr.addEventListener('load', () => {
             this[target].url = fr.result
-            this[target].file = files[0] // this is an image file that can be sent to server...
-            // TODO
-            // this.resizePhoto(fr.result)
+            this[target].file = files[0]
           })
         } else {
           this[target].name = ''
@@ -297,12 +295,6 @@
           )
         }
       }
-    },
-    firestore: {
-      // messages: db.collection('messages')
-      //   .where('conversation', '==', 'g1J2uIc4qupUo8ATZ6UQ')
-      //   .orderBy("createdAt", "desc")
-      //   .limit(30)
     }
   }
 </script>
