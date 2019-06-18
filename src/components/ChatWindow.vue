@@ -26,7 +26,8 @@
                 v-for="message in messagesList"
                 :key="message.id"
                 xs7
-                :offset-xs5="message.sender === activeUser.uid"
+                :class="{ spacer : message.type === 'image' }"
+                :offset-xs6="message.sender === activeUser.uid"
                 :text-xs-right="message.sender === activeUser.uid"
               >
                 <v-avatar
@@ -58,11 +59,18 @@
                     >
                       {{chatBuddy.displayName[0] || chatBuddy.email[0] }}
                     </span>
-
                 </v-avatar>
-                <v-chip label color="grey lighten-2" text-color="black">
+                <v-chip class="mb-3" label color="grey lighten-2" text-color="black" v-if="message.type === 'text'">
                   {{ message.body }}
                 </v-chip>
+                <v-img :aspect-ratio="16/9"
+                position="right"
+                max-height="300px"
+                max-width="300px"
+                contain :src="message.body"
+                v-else-if="message.type === 'image'"
+                alt="Image Unavailable">
+                </v-img>
               </v-flex>
             </transition-group>
           </v-card-title>
@@ -89,7 +97,10 @@
                 </v-btn>
               </v-flex>
               <v-flex md10 class="px-3 py-2">
+
+                <v-img :aspect-ratio="16/9" position="right" class="mx-0 px-0" max-height="300px" max-width="300px"  contain :src="imageDisplay.url"  v-if="imageDisplay.url" alt="Image Unavailable"></v-img>
                 <v-textarea
+                  v-else
                   label="Message"
                   v-model="body"
                   :rules="bodyRules"
@@ -135,6 +146,16 @@
 .scroll {
   overflow-y: scroll;
 }
+
+.spacer {
+  margin-bottom: 150px
+}
+
+.overflow-chip .v-chip__content {
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity .25s;
 }
@@ -203,6 +224,14 @@
       }
     },
     methods: {
+      reset () {
+        this.$refs.form.reset()
+        this.imageDisplay = {
+        name: '',
+        url: '',
+        file: ''
+        }
+      },
       pickFile (ref) {
         this.$refs[ref].click()
       },
@@ -228,13 +257,14 @@
       },
       sendFormImages (messagePayload) {
         let vm = this
+        const now = Date.now()
         let fileExtension = vm.imageDisplay.name
           .split('.')
           .slice(-1)
           .pop()
 
         storage
-          .images(messagePayload.conversation + '_displayImage' + '.' + fileExtension)
+          .images(`_chatImage${messagePayload.conversation}_${now}.${fileExtension}`)
           .put(vm.imageDisplay.file)
           .then(snapshot => snapshot.ref.getDownloadURL())
           .then(url => {
@@ -263,6 +293,8 @@
         } else if (vm.imageDisplay.name) {
           vm.sendFormImages(messagePayload)
         }
+
+        this.reset()
 
       },
       scrollToBottom () {
