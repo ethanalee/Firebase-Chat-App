@@ -4,8 +4,16 @@
       <v-flex xs12>
         <v-card height="100%" class="scroll" id="chat-scroll">
           <v-card-title primary-title class="fixed-title">
-            <div>
-              <h3 class="headline mb-0">Chat History {{conversation.uid}}</h3>
+            <div v-if="chatBuddy">
+              <h3 class="headline mb-0">Chatting with
+                <span v-if="!!chatBuddy.displayName">
+                  {{ chatBuddy.displayName }}
+                </span>
+                <span v-else>
+                  {{ chatBuddy.email }}
+                </span>
+
+              </h3>
             </div>
           </v-card-title>
           <v-card-title>
@@ -51,19 +59,6 @@
                       {{chatBuddy.displayName[0] || chatBuddy.email[0] }}
                     </span>
 
-
-                  <!-- <span v-if="message.sender === activeUser">
-                    <img
-                      v-if="chatBuddy && chatBuddy.avatar"
-                      :src="chatBuddy.avatar"
-                    >
-                    <span
-                      v-if="!chatBuddy.avatar"
-                      class="white--text"
-                    >
-                      {{chatBuddy.displayName[0] || chatBuddy.email[0]}}
-                    </span>
-                  </span> -->
                 </v-avatar>
                 <v-chip label color="grey lighten-2" text-color="black">
                   {{ message.body }}
@@ -187,11 +182,20 @@
         return this.$store.state["activeUser"] || null
       },
       chatBuddy () {
+        const userFallback = [{
+          uid: '',
+          displayName: '',
+          email: ''
+        }]
         let activeUser = this.activeUser.uid
-        return this.activeConversation.members
+        let members = this['activeConversation']
+          ? this.activeConversation.members
+          : userFallback
+        let buddy = members
           .filter( member => {
             return member.uid !== activeUser.uid
-          })[0]
+          })
+        return buddy[0]
       },
       messagesList () {
         let messages = this.messages
