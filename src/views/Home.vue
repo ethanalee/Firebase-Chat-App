@@ -68,6 +68,7 @@
                   <v-list-tile-content>
                     <v-list-tile-title v-text="friend.members[0].displayName" v-if="activeUser !== friend.members[0].uid"></v-list-tile-title>
                     <v-list-tile-title v-text="friend.members[1].displayName" v-else></v-list-tile-title>
+                    <v-list-tile-sub-title v-text="friend.lastModified" >  </v-list-tile-sub-title>
                   </v-list-tile-content>
 
                   <v-list-tile-avatar>
@@ -139,7 +140,7 @@
         isLoading: false,
         search: null,
         valid: true,
-        snackbar: false
+        snackbar: false,
       }
     },
     computed: {
@@ -151,6 +152,9 @@
       this.loginUser()
     },
      methods: {
+      date (timestamp) {
+        return timestamp.toDate()
+      },
       customFilter (item, queryText) {
       const textOne = item.displayName.toLowerCase()
       const searchText = queryText.toLowerCase()
