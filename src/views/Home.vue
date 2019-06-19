@@ -51,7 +51,7 @@
             </v-card>
 
           </v-flex>
-          <v-flex fluid fill-height="">
+          <v-flex fluid fill-height class="scroll">
               <v-card xs12>
               <v-list three-line v-if="!!friendsDisplayed.length">
                 <v-list-tile
@@ -99,8 +99,13 @@
 </template>
 
 <style>
+.scroll {
+  overflow-y: scroll;
+  height: calc(100vh - 1px)
+}
+
 .home-page {
-  height: calc(100vh - 56px)
+  height: calc(100vh - 70px)
 }
 .add-friend-form {
   width: 100%;

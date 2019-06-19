@@ -98,7 +98,15 @@
               </v-flex>
               <v-flex md10 class="px-3 py-2">
 
-                <v-img :aspect-ratio="16/9" position="right" class="mx-0 px-0" max-height="300px" max-width="300px"  contain :src="imageDisplay.url"  v-if="imageDisplay.url" alt="Image Unavailable"></v-img>
+                <v-img :aspect-ratio="16/9"
+                position="right"
+                class="mx-0 px-0"
+                max-height="300px"
+                max-width="300px"
+                contain
+                :src="imageDisplay.url"
+                v-if="imageDisplay.url"
+                alt="Image Unavailable"></v-img>
                 <v-textarea
                   v-else
                   label="Message"
@@ -131,8 +139,11 @@
 </template>
 
 <style>
+.headline {
+  position: fixed
+}
 .chat-window {
-  height: calc(100% - 85px);
+  height: calc(100% - 102px);
 }
 .chat-window .fill-button {
   width: 100%;
@@ -144,6 +155,7 @@
   overflow: hidden;
 }
 .scroll {
+  max-height: 500px;
   overflow-y: scroll;
 }
 
